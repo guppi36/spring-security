@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <title>Users list</title>
+ <style>table th, table td {padding: 5px;}</style>
+</head>
+<body>
+<h1>Users list</h1>
+
+<table border="1">
+ <tr th:each="user, state : ${users}">
+  <td>
+   <form th:action="@{/update}" th:object="${user}" method="post">
+    <input type="hidden" name="id" th:value="${user.getId()}">
+    <input type="text" name="firstName" th:value="${user.getFirstName()}">
+    <input type="text" name="lastName" th:value="${user.getLastName()}">
+    <input type="text" name="email" th:value="${user.getEmail()}">
+    <button type="submit">Update</button>
+   </form>
+  </td>
+  <td>
+  <form th:action="@{/delete}" th:object="${user}" method="post">
+   <input type="hidden" name="id" th:value="${user.getId()}">
+   <input type="hidden" name="firstName" th:value="${user.getFirstName()}">
+   <input type="hidden" name="lastName" th:value="${user.getLastName()}">
+   <input type="hidden" name="email" th:value="${user.getEmail()}">
+   <button type="submit">Delete</button>
+  </form>
+  </td>
+ </tr>
+
+</table>
+
+<form th:action="@{/add}" method="post">
+ <p>Add user: <input type="text" name="name">
+  <input type="text" name="lastName">
+  <input type="text" name="email">
+  <input type="submit" value="Add"></p>
+</form>
+
+</body>
+</html>
