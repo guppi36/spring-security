@@ -14,9 +14,6 @@ import java.util.List;
 public class UserDaoImp implements UserDao {
 
    @Autowired
-   private SessionFactory sessionFactory;
-
-   @Autowired
    private EntityManager entityManager;
 
    @Override
@@ -24,7 +21,6 @@ public class UserDaoImp implements UserDao {
       entityManager.getTransaction().begin();
       entityManager.persist(user);
       entityManager.getTransaction().commit();
-      // sessionFactory.getCurrentSession().save(user);
    }
 
    @Override

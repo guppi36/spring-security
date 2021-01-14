@@ -10,7 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.ArrayList;
 import java.util.List;
 
-
+// Class for fast add some users to data base
 public class MainApp {
 
     public static void main(String[] args) {
