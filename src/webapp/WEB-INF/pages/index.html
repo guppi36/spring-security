@@ -18,6 +18,7 @@
     <input type="text" name="firstName" th:value="${user.getFirstName()}">
     <input type="text" name="lastName" th:value="${user.getLastName()}">
     <input type="text" name="email" th:value="${user.getEmail()}">
+    <input type="text" name="password" th:value="${user.getPassword()}">
     <button type="submit">Update</button>
    </form>
   </td>
@@ -27,6 +28,7 @@
    <input type="hidden" name="firstName" th:value="${user.getFirstName()}">
    <input type="hidden" name="lastName" th:value="${user.getLastName()}">
    <input type="hidden" name="email" th:value="${user.getEmail()}">
+   <input type="hidden" name="password" th:value="${user.getPassword()}">
    <button type="submit">Delete</button>
   </form>
   </td>
@@ -35,9 +37,11 @@
 </table>
 
 <form th:action="@{/add}" method="post">
- <p>Add user: <input type="text" name="name">
+ <p>Add user:
+  <input type="text" name="name">
   <input type="text" name="lastName">
   <input type="text" name="email">
+  <input type="text" name="password">
   <input type="submit" value="Add"></p>
 </form>
 
