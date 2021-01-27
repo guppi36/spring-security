@@ -33,4 +33,10 @@ public class UserServiceImp implements UserService {
    @Transactional
    @Override
    public void update(User user) { userDao.update(user); }
+
+   @Transactional
+   @Override
+   public User getUserByName(String username) {
+      return userDao.getUserByName(username);
+   }
 }

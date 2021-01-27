@@ -1,21 +1,25 @@
 package web.controller;
 
 import hiber.config.HiberConfig;
+import hiber.model.Role;
 import hiber.model.User;
 import hiber.service.UserService;
-import hiber.service.UserServiceImp;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
-public class HelloController {
+@RequestMapping(value = "/admin")
+public class AdminController {
 
-	@GetMapping(value = "/")
+    @GetMapping(value = "/")
 	public String printStart(ModelMap model) {
 		AnnotationConfigApplicationContext context =
 				new AnnotationConfigApplicationContext(HiberConfig.class);
@@ -28,18 +32,25 @@ public class HelloController {
 		return "index";
 	}
 
-	@PostMapping(value = "/add")
-	public String addUser2(@RequestParam String name, @RequestParam String lastName,
+   	@PostMapping(value = "/add")
+	public String addUser2(@RequestParam String username,
 						   @RequestParam String email,
-						   @RequestParam String password,ModelMap model) {
+						   @RequestParam String password,
+						   @RequestParam(defaultValue = "false") boolean isAdmin, ModelMap model) {
 		AnnotationConfigApplicationContext context =
 				new AnnotationConfigApplicationContext(HiberConfig.class);
 
+		User newUser = new User(username, email, password);
+		Set<Role> roles = new HashSet<>();
+		roles.add(Role.getUserRole());
+		if(isAdmin) roles.add(Role.getAdminRole());
+
+		newUser.setRoles(roles);
+
 		UserService userService = context.getBean(UserService.class);
-		userService.add(new User(name, lastName, email, password));
+		userService.add(newUser);
 
 		List<User> userList = userService.listUsers();
-
 		model.addAttribute("users", userList);
 		return "index";
 	}
@@ -48,7 +59,7 @@ public class HelloController {
 	public String updateUser(@ModelAttribute(value="user") User user, ModelMap model) {
 		AnnotationConfigApplicationContext context =
 				new AnnotationConfigApplicationContext(HiberConfig.class);
-		System.out.println(user);
+
 		UserService userService = context.getBean(UserService.class);
 		userService.update(user);
 		List<User> userList = userService.listUsers();
@@ -69,20 +80,4 @@ public class HelloController {
 		model.addAttribute("users", userList);
 		return "index";
 	}
-
-	@RequestMapping(value = "hello", method = RequestMethod.GET)
-	public String printWelcome(ModelMap model) {
-		List<String> messages = new ArrayList<>();
-		messages.add("Hello!");
-		messages.add("I'm Spring MVC-SECURITY application");
-		messages.add("5.2.0 version by sep'19 ");
-		model.addAttribute("messages", messages);
-		return "hello";
-	}
-
-	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public String loginPage() {
-		return "login";
-	}
-	
 }

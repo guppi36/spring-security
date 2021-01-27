@@ -3,6 +3,7 @@ package hiber.model;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Set;
 
 // Этот класс реализует интерфейс GrantedAuthority, в котором необходимо переопределить только один метод getAuthority() (возвращает имя роли).
 // Имя роли должно соответствовать шаблону: «ROLE_ИМЯ», например, ROLE_USER.
@@ -16,7 +17,15 @@ public class Role implements GrantedAuthority {
     private Long id;
     private String role;
 
+    @ManyToMany(mappedBy = "roles")
+    Set<User> users;
+
     public Role() { }
+
+    public Role(String name)
+    {
+        role = name;
+    }
 
     public Role(Long id, String role) {
         this.id = id;
@@ -39,8 +48,24 @@ public class Role implements GrantedAuthority {
         this.role = role;
     }
 
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     @Override
     public String getAuthority() {
         return role;
+    }
+
+    public static Role getAdminRole(){
+        return new Role(1L, "ROLE_ADMIN");
+    }
+
+    public static Role getUserRole(){
+        return new Role(2L, "ROLE_USER");
     }
 }

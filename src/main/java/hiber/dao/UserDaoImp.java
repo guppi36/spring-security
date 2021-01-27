@@ -1,16 +1,18 @@
 package hiber.dao;
 
+import hiber.model.Role;
 import hiber.model.User;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class UserDaoImp implements UserDao {
@@ -38,8 +40,33 @@ public class UserDaoImp implements UserDao {
 
    @Override
    public void update(User user) {
-      entityManager.find(User.class, user.getId());
+      User newUser = entityManager.find(User.class, user.getId());
+      user.setRoles(newUser.getRoles());
       entityManager.merge(user);
+   }
+
+   @Override
+   public User getUserByName(String name) {
+      return entityManager.createQuery("from User u WHERE u.username = :value", User.class)
+              .setParameter("value", name).getSingleResult();
+   }
+
+   @Override
+   public UserDetails getUserDetailsByName(String name) {
+      UserDetails loadedUser;
+
+      User client = entityManager.createQuery("from User u WHERE u.username = :value", User.class)
+              .setParameter("value", name).getSingleResult();
+
+      Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+      for (Role role: client.getRoles()) {
+         grantedAuthorities.add(role);
+      }
+
+      loadedUser = new org.springframework.security.core.userdetails.User(
+              client.getUsername(), client.getPassword(), grantedAuthorities);
+
+      return loadedUser;
    }
 
 }
