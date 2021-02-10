@@ -40,8 +40,6 @@ public class UserDaoImp implements UserDao {
 
    @Override
    public void update(User user) {
-      User newUser = entityManager.find(User.class, user.getId());
-      user.setRoles(newUser.getRoles());
       entityManager.merge(user);
    }
 
@@ -53,20 +51,8 @@ public class UserDaoImp implements UserDao {
 
    @Override
    public UserDetails getUserDetailsByName(String name) {
-      UserDetails loadedUser;
-
-      User client = entityManager.createQuery("from User u WHERE u.username = :value", User.class)
+      return entityManager.createQuery("from User u WHERE u.username = :value", User.class)
               .setParameter("value", name).getSingleResult();
-
-      Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-      for (Role role: client.getRoles()) {
-         grantedAuthorities.add(role);
-      }
-
-      loadedUser = new org.springframework.security.core.userdetails.User(
-              client.getUsername(), client.getPassword(), grantedAuthorities);
-
-      return loadedUser;
    }
 
 }
